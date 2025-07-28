@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 const CreatePost = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  console.log("user",user)
 
   return (
     <div className="relative max-w-5xl mx-auto px-4 py-12 text-gray-800">
@@ -18,7 +19,7 @@ const CreatePost = () => {
         <meta name="keywords" content="react, blog, articles, posts, create post" />
       </Helmet>
 
-      {user?.author_id !== null  ? (
+      {user ? (
         <>
           <div className="space-y-6">
             <StepForm />

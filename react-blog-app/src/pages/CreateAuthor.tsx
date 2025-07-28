@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import AuthorCard from '../components/Author/AuthorCard'
 import AuthorCardHeader from '../components/Author/AuthorCaredHeader'
 import { useAuthor } from '../Provider/AuthorProvider'
@@ -8,10 +8,23 @@ import AuthorExperience from '../components/Author/AuthorExperience'
 import UpdateAuthorExperienceCard from '../components/Author/UpdateAuthorExperienceCard'
 import AuthorSkillsAndHobbies from '../components/Author/AuthorSkillsAndHobbies'
 import AuthorSocial from '../components/Author/AuthorSocial'
+import { useAuth } from '../Provider/AuthProvider'
+import { useNavigate } from 'react-router-dom'
+import LoadingComponent from '../components/Loading'
 
 const CreateAuthor = () => {
-
+    const{user}=useAuth()
+    const navigate=useNavigate()
+    const [loading,setLoading]=useState(true)
+    useEffect(()=>{
+        if(!user){
+            setLoading(false)
+            navigate("/login")
+        }
+    },[user,loading])
     const { setIsUpdate, dispatch,createAuthor } = useAuthor()
+    if(loading)
+        return <LoadingComponent/>
 
     useEffect(() => {
         setIsUpdate(true)
