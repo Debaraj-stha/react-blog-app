@@ -118,7 +118,7 @@ blog-app/
 * 📦 Modern build system using Vite
 * ⚡ Fast, responsive UI with Tailwind and styled-components
 * 🌐 RESTful API with modular routing
-* 
+
 
 ---
 
@@ -127,7 +127,7 @@ blog-app/
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/blog-app.git
+git clone https://github.com/Debaraj-stha/react-blog-app.git
 cd blog-app
 ```
 
