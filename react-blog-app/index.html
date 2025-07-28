@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>React Blog App</title>
+  <style>
+    .pre-loader {
+      width: 100%;
+      height: 100vh;
+      background-color: #121212;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 9999;
+      position: fixed;
+      top: 0;
+      left: 0;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .sine-loader {
+      display: flex;
+      gap: 6px;
+    }
+
+    .sine-loader span {
+      display: block;
+      width: 10px;
+      height: 30px;
+      background: #00f6ff;
+      animation: wave 1.2s infinite ease-in-out;
+    }
+
+    .sine-loader span:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .sine-loader span:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .sine-loader span:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .sine-loader span:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+
+    .sine-loader span:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+
+    .sine-loader span:nth-child(6) {
+      animation-delay: 0.5s;
+    }
+
+    @keyframes wave {
+
+      0%,
+      100% {
+        transform: scaleY(0.4);
+      }
+
+      50% {
+        transform: scaleY(1.2);
+      }
+    }
+
+    .pre-loader h1 {
+      color: #ddd;
+      font-size: 16px;
+      margin-top: 20px;
+      font-weight: 400;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <div class="pre-loader" id="globalLoader">
+      <div class="sine-loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <h1>Loading...</h1>
+    </div>
+  </div>
+  <script type="module" src="/src/main.tsx"></script>
+  <script>
+    // Optional: hide loader when app is ready
+    window.addEventListener("DOMContentLoaded", () => {
+      const loader = document.getElementById("globalLoader");
+      if (loader) loader.style.display = "none";
+    });
+  </script>
+</body>
+
+</html>
