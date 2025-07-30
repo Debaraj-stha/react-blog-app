@@ -22,6 +22,7 @@ import FeedbackHistory from '../pages/FeedbackHistory'
 import Setting from '../pages/Setting'
 import CreateAuthor from '../pages/CreateAuthor'
 import AuthorProvider from '../Provider/AuthorProvider'
+import CollaborationWithProvider from './CollaborationWithProvider'
 
 const AppRoutes = () => {
   return (
@@ -48,7 +49,10 @@ const AppRoutes = () => {
         <Route path='user/bookmarks' element={<Bookmarks />}></Route>
         <Route path='user/feedbacks-history/' element={<FeedbackHistory />}></Route>
         <Route path='settings/' element={<Setting />}></Route>
-        <Route path='create-author-account' element={<AuthorProvider><CreateAuthor/></AuthorProvider>}></Route>
+        <Route path='create-author-account' element={<AuthorProvider><CreateAuthor /></AuthorProvider>}></Route>
+        <Route path='collaboration' element={<CollaborationWithProvider />}></Route>
+
+        <Route path='collaboration/:room_id' element={<CollaborationWithProvider />}></Route>
         <Route path='*' element={<NotFound />} />
       </Routes>
     </>

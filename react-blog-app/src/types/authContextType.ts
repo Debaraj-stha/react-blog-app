@@ -1,5 +1,6 @@
 import type { Location, NavigateFunction } from "react-router-dom";
 import type { FormAction, FormState, User } from "./login";
+import type { SetStateAction } from "react";
 
 
 export type AuthContextType = {
@@ -21,6 +22,7 @@ export type AuthContextType = {
     loading: boolean,
     authError: string | null;
     deleteAccount:()=>void
+    setLoading:React.Dispatch<SetStateAction<boolean>>
     
 
 };

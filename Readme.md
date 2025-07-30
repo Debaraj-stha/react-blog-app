@@ -17,6 +17,7 @@ A feature-rich, full-stack blogging platform with authentication, rich-text edit
 6. [Scripts](#-scripts)
 7. [API Overview](#-api-overview)
 8. [Future Improvements](#-future-improvements)
+9. [Demo](#demo)
 
 ---
 
@@ -210,7 +211,7 @@ node index.js     # Run normally
 
 ---
 
-## Demo Video
+##  Demo
  [Watch-video](https://www.youtube.com/watch?v=phjJOCKW2Rk)
 
 

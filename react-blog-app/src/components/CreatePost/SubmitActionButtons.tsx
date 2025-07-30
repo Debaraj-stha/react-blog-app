@@ -5,6 +5,7 @@ import { useCreateContext } from '../../Provider/CreatePostProvider'
 import { useAuth } from '../../Provider/AuthProvider'
 import { useMessageContext } from '../../Provider/MessageProviders'
 import { useLocation, useNavigate } from 'react-router-dom'
+import SaveToLocalStorage from '../../helper/autoSaveBlogToLocalstorage'
 
 const SubmitActionButtons = memo(({isEdit}:{isEdit:boolean}) => {
     const {
@@ -70,6 +71,9 @@ const SubmitActionButtons = memo(({isEdit}:{isEdit:boolean}) => {
             addMessage({ message: `Blog ${isEdit ? 'Updated' : "Submitted"}`, type: "success" });
             setStep(0);
             navigate(BLOG_POST_SUCCESS_REDIRECT_URL)
+            //deleting saved draft after saving to db
+            const storage=new SaveToLocalStorage(user?.user_id!)
+            storage.delete()
         }
     }
 

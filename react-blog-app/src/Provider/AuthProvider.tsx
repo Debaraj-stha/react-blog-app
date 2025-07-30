@@ -242,6 +242,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }, [])
     const signWithGoogle = useCallback(async (from?: string, navigate?: ReturnType<typeof useNavigate>, location?: Location) => {
         try {
+            setLoading(true)
             const provider = new GoogleAuthProvider();
             const result = await signInWithPopup(firebaseAuth, provider);
             const user = result.user
@@ -253,6 +254,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             addMessage({ message: `Error signin with Google ${error.message}`, type: "error" })
             setAuthError(error)
             return false
+        }
+        finally{
+            setLoading(false)
         }
     }, []);
     const deleteAccount = useCallback(async () => {
@@ -327,7 +331,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         user,
         loading,
         authError,
-        deleteAccount
+        deleteAccount,
+        setLoading
 
 
     }), [
@@ -343,8 +348,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         user,
         loading,
         authError,
-        deleteAccount
-
+        deleteAccount,
+        setLoading
     ]);
 
     return (

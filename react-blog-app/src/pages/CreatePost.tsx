@@ -33,7 +33,7 @@ const CreatePost = () => {
           <h2 className="text-2xl font-medium mb-4 text-gray-800 dark:text-gray-100">You're not an author yet.</h2>
           <p className="mb-6 text-gray-600 dark:text-gray-200">To create posts, please create an author account.</p>
           <button
-            onClick={() => navigate("/create-author-account")}
+            onClick={() => navigate("/create-author-account",{state:{from:"/create-post"}})}
             className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition duration-200"
           >
             Create Author Account

@@ -7,7 +7,7 @@ const PostStatus = () => {
 
     } = useCreateContext()
     return (
-        <div className="text-gray-100 my-6">
+        <div className="text-gray-800 dark:text-white my-6">
             <h2 className="text-lg font-semibold mb-2">Post Status</h2>
             {/* Status selection */}
             <div className="flex gap-4 items-center mb-4">

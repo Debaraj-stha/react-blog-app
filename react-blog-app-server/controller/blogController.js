@@ -246,6 +246,7 @@ const getBlogs = async (req, res) => {
         const cleanedBlogs = blogs.map(blog => blog.toObject({ versionKey: false }))
         res.status(200).json({ blogs: cleanedBlogs })
     } catch (error) {
+        console.log(error)
         res.status(500).json({ message: error.message })
     }
 }
@@ -397,6 +398,7 @@ const filterAndSortBlogs = async (req, res) => {
             message: `Filtered${field ? ` by ${field}` : ""} and sorted${sortField ? ` by ${sortField} (${sortOrder})` : ""} successfully.`,
         });
     } catch (error) {
+        console.log("error",error)
         res.status(500).json({ message: error.message });
     }
 };

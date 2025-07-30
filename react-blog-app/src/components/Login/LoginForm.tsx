@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import LoginWithGithub from './LoginWithGithub'
 import LoginWithGoogle from './LoginWithGoogle'
@@ -8,27 +8,29 @@ import LoginWithEmail from './LoginWithEmail'
 import { ErrorMessage } from '../../styled-element/paragraph'
 import { useAuth } from '../../Provider/AuthProvider'
 type Props = {
-    classList: string,
-    text: string,
-    onClick: React.MouseEventHandler<HTMLButtonElement>
+  classList: string,
+  text: string,
+  onClick: React.MouseEventHandler<HTMLButtonElement>
 }
 
 
 const Button = ({ classList, text, onClick }: Props) => {
-    return (
-        <button
-            onClick={onClick}
-            className={`w-full my-3 text-white py-2 px-4 rounded-md  transition ${classList}`}
-        >
-            {text}
-        </button>
-    )
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full my-3 text-white py-2 px-4 rounded-md  transition ${classList}`}
+    >
+      {text}
+    </button>
+  )
 }
 
 
 export const LoginOptions = () => {
+
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth()
   const state = location.state;
 
   const loginWithEmail = () => {
@@ -38,6 +40,11 @@ export const LoginOptions = () => {
   const loginWithEmailPassword = () => {
     navigate('/login/with_email_password', { state });
   };
+  useEffect(() => {
+    if (user) {
+      navigate(state ? state.from : "/")
+    }
+  }, [user])
 
   return (
     <div className="h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-800">
@@ -66,9 +73,17 @@ export const LoginOptions = () => {
 
 const LoginForm = () => {
   const { type } = useParams();
-  const { onSubmit, errors } = useAuth();
+  const { onSubmit, errors, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const state=location.state
+  //if login already redirect back to page
+  useEffect(() => {
+    if (user) {
+      navigate(state ? state.from : "/")
+    }
+  }, [user])
+
 
   const isSignedWithEmail = type?.toLowerCase() === 'with_email';
 

@@ -17,7 +17,7 @@ const NameAvatar = ({ name = "John Doe" }: NameAvatarProps) => {
 
   return (
     <div
-      className="rounded-full w-10 h-10 border items-center justify-center text-center flex text-white font-semibold shadow"
+      className="rounded-full size-10 border items-center justify-center text-center flex text-white font-semibold shadow"
       style={{ background: stringToColor(name) }}
       title={name}
       aria-label={`Avatar for ${name}`}
