@@ -4,8 +4,10 @@ const HorizontalPageScrollIndicator = () => {
     const [scrollProgress, setScrollProgress] = useState(0);
     useEffect(() => {
         const updateScroll = () => {
-            const scrollTop = window.scrollY; //scroll position vertically
-            const winHeight = document.documentElement.scrollHeight - window.innerHeight; //document height-window inner height
+            const scrollTop = window.scrollY; //return has far document  or element has been scrolled from top
+            const scrollHeight=document.documentElement.scrollHeight //return document scrollable heighht
+            const innerHeight=window.innerHeight //return browser viewport height
+            const winHeight = scrollHeight - innerHeight
             const scrolled = (scrollTop / winHeight) * 100;//change to percentage
             setScrollProgress(scrolled);
         };

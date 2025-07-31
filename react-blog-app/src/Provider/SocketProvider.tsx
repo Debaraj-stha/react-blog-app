@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode, type SetStateAction } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode, type SetStateAction } from "react";
 import { io, Socket } from "socket.io-client";
 import { usePeer } from "./PeerProvider";
 import { useAuth } from "./AuthProvider";
@@ -15,8 +15,8 @@ type SocketContextType = {
     onAccept: () => Promise<void>;
     onReject: () => Promise<void>;
     socket: Socket,
-    roomId: string | null
-    setRoomId: React.Dispatch<SetStateAction<string | null>>
+    roomId: string 
+    setRoomId: React.Dispatch<SetStateAction<string>>
     joinRoom: () => void
     createRoom: () => void
     loading: boolean
@@ -27,7 +27,7 @@ type SocketContextType = {
     messages: MessageType[] | null
     totalMembers: number
     setMessageInput: React.Dispatch<SetStateAction<string>>
-    offerStatus:OfferStatus
+    offerStatus: OfferStatus
 };
 type MessageUserType = {
 
@@ -44,7 +44,7 @@ export type MessageType = {
     roomId?: string
 }
 type OfferType = {
-    caller: MessageUserType,
+    caller: MessageUserType | null,
     offer: RTCSessionDescriptionInit
 }
 type OfferStatus = "idle" | "incoming" | "accepted" | "rejected";
@@ -54,7 +54,7 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
     const [localStream, setLocalStream] = useState<MediaStream | null>(null)
     const [offerFrom, setOfferFrom] = useState<MessageUserType | undefined>()
     const [incomingOffer, setIncomingOffer] = useState<OfferType | null>()
-    const [roomId, setRoomId] = useState<string | null>(null)
+    const [roomId, setRoomId] = useState<string>("")
     const [hasRoomCreated, setRoomCreated] = useState(false)
     const [hasJoined, setJoined] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -63,6 +63,8 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
     const { peer, createAnswer, createOffer, setRemoteAnswer, sendStream, remoteStream, setRemoteStream } = usePeer();
     const [messageInput, setMessageInput] = useState<string>("")
     const [offerStatus, setOfferStatus] = useState<OfferStatus>("idle");
+    // const localVideoRef=useRef()
+    // const remoteVideoRef=useRef()
     const [totalMembers, setTotalMembers] = useState(1)
     const { addMessage } = useMessageContext()
 
@@ -72,8 +74,6 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
 
     // inside your component:
     const navigate = useNavigate();
-    const location = useLocation();
-
     useEffect(() => {
         if (!socket?.id) return;
         setRoomId(socket.id);
@@ -120,9 +120,6 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-    const hanldeOfferAccept = useCallback(async (answer: RTCSessionDescriptionInit) => {
-        await setRemoteAnswer(answer)
-    }, [setRemoteAnswer])
 
     const handleUserJoined = useCallback((joinee: any) => {
         addMessage({ message: `{user ${joinee.id}  joined the room}`, type: "info" })
@@ -142,12 +139,13 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
         setJoined(true)
     }, [])
     const handleMessage = useCallback((message: MessageType) => {
-        console.log(message)
+       
         setMessages(prevMessages => prevMessages ? [...prevMessages, message] : [message]);
     }, [])
     const handleMembers = useCallback((onlineMembersCount: number) => {
         setTotalMembers(onlineMembersCount)
     }, [totalMembers])
+
     const handleUserLeft = useCallback((user: MessageUserType) => {
         console.log("handle user left", user)
         const message: MessageType = {
@@ -158,9 +156,9 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
         }
         setMessages((prev) => prev ? [...prev, message] : [message]);
     }, [messages]);
+
     const handleOfferCall = useCallback((data: any) => {
         console.log("offer received", data)
-
         setIncomingOffer(data)
         setOfferStatus("incoming");
     }, [])
@@ -227,21 +225,29 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
 
 
     const offerCall = useCallback(async (room: string) => {
-        if (!user) return;
+
+        if (!user) {
+            console.log("user is null", user)
+            return;
+        }
+        if(roomId.trim()===""){
+            console.log("no room id",roomId)
+            return
+        }
 
         try {
             // Ensure we have media before creating offer
-            if (!localStream) {
-                await getUserMedia();
-            }
+            // if (!localStream) {
+            //     await getUserMedia();
+            // }
 
 
             const offer = await createOffer();
             socket.emit("offer", {
                 caller: {
-                    name: user.name,
-                    email: user.email,
-                    photot: user.image
+                    name: user?.name || "",
+                    email: user?.email || "",
+                    photot: user?.image || ""
                 },
                 roomId: room,
                 offer
@@ -254,41 +260,27 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
 
 
 
-    // useEffect(() => {
-    //     let stream: MediaStream;
-
-    //     const init = async () => {
-    //         try {
-    //             stream = await getUserMedia();
-    //         } catch (err) {
-    //             console.error("Media initialization failed:", err);
-    //         }
-    //     };
-
-    //     init();
-
-    //     return () => {
-    //         if (stream) {
-    //             console.log("Cleaning up media streams");
-    //             stream.getTracks().forEach(track => track.stop());
-    //         }
-    //     };
-    // }, [getUserMedia]);
-
-
-    const handleStream = useCallback((event: RTCTrackEvent) => {
-        console.log("TRACK EVENT", event);
-        if (event.streams && event.streams[0]) {
-            setRemoteStream(event.streams[0]);
-        }
-    }, []);
-
     useEffect(() => {
-        peer.addEventListener("track", handleStream);
-        return () => {
-            peer.removeEventListener("track", handleStream);
+        let stream: MediaStream;
+
+        const init = async () => {
+            try {
+                stream = await getUserMedia();
+            } catch (err) {
+                console.error("Media initialization failed:", err);
+            }
         };
-    }, [handleStream, peer]);
+
+        init();
+
+        return () => {
+            if (stream) {
+                console.log("Cleaning up media streams");
+                stream.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, [getUserMedia]);
+
 
 
 
@@ -300,7 +292,7 @@ const SocketProvider = ({ children }: { children: ReactNode }) => {
         if (roomId && roomId.trim()) {
             navigate(`/collaboration/${roomId}`)
             setRoomCreated(true)
-            await offerCall(roomId)
+
             addMessage({ message: "creating room...", type: "info" })
         }
         else addMessage({ message: "Room id is required", type: "info" })

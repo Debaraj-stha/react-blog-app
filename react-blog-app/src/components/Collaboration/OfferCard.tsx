@@ -9,16 +9,16 @@ const OfferCard = () => {
   return (
     <div className="bg-gray-700 text-white rounded-xl p-5 shadow-lg max-w-md w-full space-y-4">
       <div className="flex items-center gap-4">
-        {incomingOffer?.caller.photo ? (
+        {incomingOffer?.caller!.photo ? (
           <img
             src={incomingOffer?.caller.photo}
             alt={incomingOffer?.caller.name!||incomingOffer?.caller.email}
             className="w-16 h-16 rounded-full object-cover border-2 border-white"
           />
-        ) : <NameAvatar name={incomingOffer?.caller.name!}/>}
+        ) : <NameAvatar name={incomingOffer?.caller!.name!}/>}
         <div>
-          <p className="text-lg font-semibold">Offer from: {incomingOffer?.caller.name!}</p>
-          <p className="text-sm text-gray-300">{incomingOffer?.caller.email}</p>
+          <p className="text-lg font-semibold">Offer from: {incomingOffer?.caller!.name!}</p>
+          <p className="text-sm text-gray-300">{incomingOffer?.caller!.email}</p>
         </div>
       </div>
 

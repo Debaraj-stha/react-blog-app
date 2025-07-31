@@ -67,26 +67,33 @@ io.on("connection", (socket) => {
 
 
 
-  // You can add custom handlers here, e.g. screen-share, doc editing
+
   socket.on("join-room", async (data) => {
     const { roomId } = data
     socket.join(roomId);
-    socket.emit("join-room", roomId); // Emit to sender
+    socket.emit("join-room", roomId); 
+    //send event to all members of room except sender
     socket.to(roomId).emit("user-joined", {
       id: socket.id,
       ...data
-    }); // Emit to others except sender
+    });
     userNameMap.set(socket.id, data.user)
     socketToRoom.set(socket.id, roomId)
-    //send offer after joining
-    socket.emit('offer', offerToRoomMap.get(roomId))
-    console.log(userNameMap)
-    const socketInRoom = await io.in(roomId).fetchSockets() //return set 
-    const socketArray = Array.from(socketInRoom).map((spckets) => spckets.id)
+
+    console.log("joining with room id", roomId);
+
+    const existingOffer = offerToRoomMap.get(roomId);
+    if (existingOffer) {
+      socket.emit('offer', existingOffer);
+    }
+
+    const socketInRoom = await io.in(roomId).fetchSockets();
+    const socketArray = Array.from(socketInRoom).map((spckets) => spckets.id);
     console.log(`User ${socket.id} joined room: ${roomId}`);
     console.log(socketArray)
-    io.in(roomId).emit("room-members", socketArray.length);//send total online user to all members
+    io.in(roomId).emit("room-members", socketArray.length); //send to all members of room
   });
+
 
 
   socket.on("message", (message) => {

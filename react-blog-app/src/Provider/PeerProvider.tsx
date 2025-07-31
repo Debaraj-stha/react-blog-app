@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode, type SetStateAction } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode, type SetStateAction } from "react";
 
 
 type PeerContextType = {
@@ -9,6 +9,7 @@ type PeerContextType = {
     setRemoteAnswer: (answer: RTCSessionDescriptionInit) => void
     sendStream: (stream: MediaStream) => void
     setRemoteStream: React.Dispatch<SetStateAction<MediaStream | null>>
+    shareScreen: () => void
 }
 
 
@@ -21,14 +22,19 @@ const PeerProvider = ({ children }: { children: ReactNode }) => {
     const peer = useMemo(() => {
         const newPeer = new RTCPeerConnection({
             iceServers: [
-                { urls: "stun:stun.l.google.com:19302" },
                 {
-                    urls: "turn:relay.metered.ca:80",
-                    username: "devraj",
-                    credential: "devraj"
+                    urls: 'turn:27.34.68.236:3478',
+                    username: 'webrtcuser',
+                    credential: 'webrtcpass'
+                },
+                {
+                    urls: 'stun:stun.l.google.com:19302' // fallback STUN server
                 }
             ]
+
         });
+
+
 
 
         newPeer.oniceconnectionstatechange = () => {
@@ -59,6 +65,7 @@ const PeerProvider = ({ children }: { children: ReactNode }) => {
             }
         }
         peer.ontrack = (event) => {
+            console.log("inside track method")
             if (event.streams && event.streams[0]) {
                 console.log("Setting remote stream with id:", event.streams[0].id);
                 setRemoteStream(event.streams[0]);
@@ -87,11 +94,45 @@ const PeerProvider = ({ children }: { children: ReactNode }) => {
     }
     const sendStream = (stream: MediaStream) => {
         const existingSenders = peer.getSenders().map(sender => sender.track);
-        for (const track of stream.getTracks()) {
-            peer.addTrack(track, stream);
 
+
+
+        for (const track of stream.getTracks()) {
+            if (!existingSenders.includes(track)) {
+                peer.addTrack(track, stream);
+            } else {
+                console.warn("Track already added:", track.kind);
+            }
         }
-    }
+    };
+    const shareScreen = useCallback(async () => {
+        try {
+            const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true })//access device screen
+            const screenTrack = screenStream.getVideoTracks()[0] //get first track
+
+            const sender = remoteStream
+                ?.getTracks()
+                .flatMap(() =>
+                (typeof window !== 'undefined' && 'peerConnection' in window
+                    ? (window as any).peerConnection?.getSenders().filter((s: RTCRtpSender) => s.track?.kind === 'video')
+                    : [])
+                )[0]
+
+            if (sender && screenTrack) {
+                sender.replaceTrack(screenTrack)
+
+                // When screen sharing stops, revert to camera
+                screenTrack.onended = async () => {
+                    const cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                    const cameraTrack = cameraStream.getVideoTracks()[0]
+                    if (cameraTrack) sender.replaceTrack(cameraTrack)
+                }
+            }
+        } catch (err) {
+            console.error("Error sharing screen:", err)
+        }
+    }, [])
+
     const value = useMemo(() => ({
         peer,
         createAnswer,
@@ -99,7 +140,8 @@ const PeerProvider = ({ children }: { children: ReactNode }) => {
         setRemoteAnswer,
         sendStream,
         remoteStream,
-        setRemoteStream
+        setRemoteStream,
+        shareScreen
     }), [
         peer,
         createAnswer,
@@ -107,7 +149,8 @@ const PeerProvider = ({ children }: { children: ReactNode }) => {
         setRemoteAnswer,
         sendStream,
         remoteStream,
-        setRemoteStream
+        setRemoteStream,
+        shareScreen
     ])
     return (
         <PeerContext.Provider value={value}>

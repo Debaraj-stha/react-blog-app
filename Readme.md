@@ -211,7 +211,14 @@ node index.js     # Run normally
 
 ---
 
+
 ##  Demo
  [Watch-video](https://www.youtube.com/watch?v=phjJOCKW2Rk)
+
+## Update
+
+* Setup socket on client and server for collaboration
+* can send message in real time withing room members
+* WebRTC setup
 
 
