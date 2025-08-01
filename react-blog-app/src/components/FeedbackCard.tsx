@@ -1,8 +1,10 @@
 import React, { memo } from 'react'
 import type { FeedbackType } from '../types/feedbackType'
 import { stringToColor } from '../helper/randomColorGenerator'
+import NameAvatar from './NameAvatar'
 
 const FeedbackCard = memo(({ message, name, profile, createdAt, email }: FeedbackType) => {
+  console.log("profile",profile)
   return (
     <div className="bg-gray-100 dark:bg-gray-800 rounded-lg shadow p-4 mb-4 border border-gray-200 dark:border-gray-700">
       <div className="flex items-center space-x-4 mb-2">
@@ -13,15 +15,9 @@ const FeedbackCard = memo(({ message, name, profile, createdAt, email }: Feedbac
               alt={name}
               className="w-12 h-12 rounded-full object-cover"
             />
-            : <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-2xl"
-            style={{ backgroundColor: stringToColor(name) }}
-            >
-              <span className="text-white text-4xl font-bold">{name
-                .split(" ")
-                .map((word) => word[0])
-                .join("")
-                .toUpperCase()}</span>
-            </div>
+            : <NameAvatar name={name} />
+
+
         }
 
         <div>

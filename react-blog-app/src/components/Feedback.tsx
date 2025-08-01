@@ -12,7 +12,7 @@ const Feedback = () => {
 
   return (
     <>
-      <h1 className='my-5 font-bold text-2xl text-gray-300 text-center'>Feedback</h1>
+      <h1 className='my-5 font-bold text-2xl text-gray-100  dark:text-gray-300 '>Feedback</h1>
       {
         loading && <div className='text-center text-gray-500'>Loading feedbacks...</div>
       }

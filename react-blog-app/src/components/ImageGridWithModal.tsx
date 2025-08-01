@@ -1,4 +1,4 @@
-import React, { useState, useMemo, memo } from 'react'
+import React, { useState, useMemo, memo, useEffect } from 'react'
 import { BiFullscreen } from 'react-icons/bi'
 import RenderImageCarousel from './RenderIMageCarousel'
 import ToolTip from './ToolTip'
@@ -22,6 +22,33 @@ const ImageGridWithModal = memo(({
     return 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3'
   }, [imageLength])
 
+
+  useEffect(() => {
+    const images = document.querySelectorAll(".blog-image img");
+    //Creates an IntersectionObserver instance.
+    //It will monitor when elements scroll into the viewport.
+    const observer = new IntersectionObserver(
+     // An array of what changed (each element that intersected the viewport).
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("animate-in");
+            observer.unobserve(entry.target); // optional: animate only once
+          }
+        });
+      },
+      {
+        threshold: 0.1, // trigger when 10% of the image is visible
+      }
+    );
+
+    images.forEach(img => observer.observe(img));
+
+    return () => observer.disconnect(); // clean up
+  }, []);
+
+
+
   if (isCarouselOpen) {
     return (
       <RenderImageCarousel
@@ -37,7 +64,7 @@ const ImageGridWithModal = memo(({
       {imageToRender.map((img, i) => {
         const isLastImageWithOverlay = shouldShowRemainingImage && i === 2
         return (
-          <div key={i} className="relative">
+          <div key={i} className="relative blog-image">
             <img
               src={img.url}
               alt={img.alt || ''}

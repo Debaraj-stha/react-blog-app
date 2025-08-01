@@ -258,6 +258,8 @@ const getBlog = async (req, res) => {
         const boolFetchSimilar = fetch_similar === "true"
         const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
         const blog = await BlogModel.findById(id);
+        const author=await AuthorModel.findById(blog.author_id).select("user_id")
+        const user=await UserModel.findById(author.user_id).select("name")
 
         await BlogReadModel.updateOne(
             { blog_id: id, ip },
@@ -295,7 +297,8 @@ const getBlog = async (req, res) => {
             similarBlogs = await getSimilarDocument({ ModelName: BlogModel, filterFields, arrayFields: ["tags"] });
             const similarBlogsId = similarBlogs.map((blog) => ({ id: blog.id, title: blog.title }))
             const filteredSimilarBlogs = similarBlogsId.filter(b => b.toString() !== id);
-            cleanedBlogs.similarBlogs = filteredSimilarBlogs
+            cleanedBlogs.similarBlogs = filteredSimilarBlogs,
+            cleanedBlogs.author_name=user.name
         }
         res.status(200).json({
             blog: cleanedBlogs,

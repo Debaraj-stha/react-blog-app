@@ -44,7 +44,7 @@ const BlogCardActionButtons = ({ post, onBookmarkChange, showShareIcon = false }
                     <button
                         onClick={handleBookmark}
                         className="hover:animate-pulse text-blue-600 hover:underline flex items-center gap-3
-                     transition-colors duration-300 group-hover:text-blue-800"
+                     transition-colors duration-300 group-hover:text-blue-800  dark:text-gray-200 dark:hover:text-gray-400"
                     >
                         {bookmark.isAlreadyBookmarked(post._id) ? <RiBookMarkedFill /> : <BiBookmark />}
                     </button>
@@ -55,7 +55,7 @@ const BlogCardActionButtons = ({ post, onBookmarkChange, showShareIcon = false }
                         <button
                             onClick={() => setIsModalOpen(true)}
                             className="hover:animate-pulse text-blue-600 hover:underline flex items-center gap-3
-                     transition-colors duration-300 group-hover:text-blue-800"
+                     transition-colors duration-300 group-hover:text-blue-800 dark:text-gray-200 dark:hover:text-gray-400"
                         >
                             <BiShare />
 

@@ -174,6 +174,7 @@ const BlogProvider = ({ children }: BlogProviderProps) => {
             setLoading(true)
             const res = await apiHelper({ url: `${BASE_URL}api/blog/${blogId}` })
             const blog = res.blog;
+   
             const date = new Date(blog.createdAt)
             blog.createdAt = date.toDateString()
             setBlog(blog)

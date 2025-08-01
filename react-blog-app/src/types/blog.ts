@@ -67,6 +67,7 @@ export type similarBlogType = {
 export type BlogType = {
     title: string;
     author_id?: string;
+    author_name?:string
     _id: string;
     createdAt?: Date;
     updatedAt?: Date;
